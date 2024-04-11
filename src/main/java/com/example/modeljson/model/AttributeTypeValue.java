@@ -3,7 +3,6 @@ package com.example.modeljson.model;
 import com.example.modeljson.config.api.utils.AbstractEntityConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.*;
 
