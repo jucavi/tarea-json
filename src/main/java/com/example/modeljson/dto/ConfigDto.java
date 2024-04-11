@@ -6,8 +6,8 @@ import com.example.modeljson.config.api.utils.AbstractEntityDtoConfig;
 import lombok.*;
 
 
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
