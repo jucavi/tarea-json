@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class AttributeTypeInterfaceImp implements AttributeTypeInterface {
+public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
 
     private final AttributeTypeRepository repository;
     private final ModelMapper modelMapper;
@@ -86,7 +86,7 @@ public class AttributeTypeInterfaceImp implements AttributeTypeInterface {
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         log.info("Deleting attribute type with ID: {}", id);
         repository.deleteById(id);
     }

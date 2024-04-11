@@ -6,11 +6,11 @@ import com.example.modeljson.model.AttributeType;
 
 import java.util.List;
 
-public interface AttributeTypeInterface {
+public interface AttributeTypeServiceInterface {
 
     List<AttributeTypeDto> findAll();
     AttributeTypeDto findById(Long id);
     AttributeTypeDto create(AttributeType attributeType);
     AttributeTypeDto update(AttributeType attributeType);
-    void delete(Long id);
+    void deleteById(Long id);
 }
