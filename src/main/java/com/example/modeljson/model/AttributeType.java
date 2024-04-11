@@ -26,8 +26,8 @@ public class AttributeType extends AbstractEntityConfig<Long> {
     private String enumDescription;
 
     @Column(name = "IS_ENUM", nullable = false)
-    private Integer is_enum = 0;
+    private Boolean isEnum = false;
 
     @Column(name = "IS_LIST", nullable = false)
-    private Integer is_list = 0;
+    private Boolean isList = false;
 }
