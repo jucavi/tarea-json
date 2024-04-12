@@ -12,5 +12,5 @@ public class AttributeTypeUpdateDto extends AbstractEntityDtoConfig {
 
     private String enumDescription;
 
-    private boolean deleted = Boolean.FALSE;
+    private boolean deleted;
 }

@@ -156,8 +156,13 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
             throw new AttributeTypeNotFoundException("Attribute type entity not found");
         }
 
+        System.out.println(oldEntityOp.get()); // TODO REMOVE
+        System.out.println(attributeType); // TODO REMOVE
+
         var oldEntity = oldEntityOp.get();
         oldEntity.setEnumDescription(attributeType.getEnumDescription());
+
+        log.error("Update Error: {}", attributeType.getDeleted()); // TODO REMOVE
         oldEntity.setDeleted(attributeType.getDeleted());
 
         AttributeType result;
