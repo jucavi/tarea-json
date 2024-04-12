@@ -23,6 +23,12 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
     private final AttributeTypeRepository repository;
     private final ModelMapper modelMapper;
 
+
+    /**
+     * Retrieve all attribute types from database
+     *
+     * @return a list of attributes types dtos
+     */
     @Override
     public List<AttributeTypeDto> findAll() {
         log.info("Retrieving all players from database");
@@ -32,8 +38,16 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * Retrieve attribute type by identifier
+     *
+     * @param id attribute type identifier
+     * @return an attribute type dto
+     * @throws AttributeTypeNotFoundException if can't find attribute type in database
+     */
     @Override
-    public AttributeTypeDto findById(Long id) {
+    public AttributeTypeDto findById(@NonNull Long id) throws AttributeTypeNotFoundException {
         log.info("Retrieving attribute type with id: {}", id);
 
         Optional<AttributeType> attributeType = repository.findById(id);
@@ -45,8 +59,16 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
         return modelMapper.map(attributeType.get(), AttributeTypeDto.class);
     }
 
+
+    /**
+     * Create new attribute type
+     *
+     * @param attributeType attribute type entity
+     * @return attribute type dto
+     * @throws RuntimeException if trying to create attribute type with not null id
+     */
     @Override
-    public AttributeTypeDto create(AttributeType attributeType) {
+    public AttributeTypeDto create(@NonNull AttributeType attributeType) throws  RuntimeException {
         log.info("Creating attribute type");
 
         if (attributeType.getId() != null) {
@@ -65,8 +87,14 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
         return modelMapper.map(result, AttributeTypeDto.class);
     }
 
+    /**
+     * Update an attribute type for the given id
+     * @param attributeType attribute type
+     * @return attribute type dto
+     * @throws RuntimeException if trying to create attribute type with null id
+     */
     @Override
-    public AttributeTypeDto update(AttributeType attributeType) {
+    public AttributeTypeDto update(AttributeType attributeType) throws  RuntimeException {
         log.info("Updating attribute type");
 
         if (attributeType.getId() == null) {
@@ -85,6 +113,10 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
         return modelMapper.map(result, AttributeTypeDto.class);
     }
 
+    /**
+     * Remove an attribute type from database with the given id
+     * @param id attribute type identifier
+     */
     @Override
     public void deleteById(Long id) {
         log.info("Deleting attribute type with ID: {}", id);
