@@ -3,10 +3,8 @@ package com.example.modeljson.controller;
 
 import com.example.modeljson.dto.AttributeTypeDto;
 import com.example.modeljson.model.AttributeType;
-import com.example.modeljson.service.AttributeTypeServiceInterface;
+import com.example.modeljson.service.interfaces.AttributeTypeServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;

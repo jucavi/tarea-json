@@ -5,6 +5,7 @@ import com.example.modeljson.dto.AttributeTypeDto;
 import com.example.modeljson.error.notfound.AttributeTypeNotFoundException;
 import com.example.modeljson.model.AttributeType;
 import com.example.modeljson.repository.AttributeTypeRepository;
+import com.example.modeljson.service.interfaces.AttributeTypeServiceInterface;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -45,7 +46,7 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
      *
      * @param id attribute type identifier
      * @return an attribute type dto
-     * @throws AttributeTypeNotFoundException if can't find attribute type in database
+     * @throws AttributeTypeNotFoundException raise exception if attribute type not found in database
      */
     @Override
     public AttributeTypeDto findById(@NonNull Long id) throws AttributeTypeNotFoundException {
@@ -66,7 +67,7 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
      *
      * @param attributeType attribute type entity
      * @return attribute type dto
-     * @throws RuntimeException if trying to create attribute type with not null id
+     * @throws RuntimeException raise exception if trying to create attribute type with not null id
      */
     @Override
     public AttributeTypeDto create(@Valid AttributeType attributeType) throws  RuntimeException {
@@ -92,7 +93,7 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
      * Update an attribute type for the given id
      * @param attributeType attribute type
      * @return attribute type dto
-     * @throws RuntimeException if trying to create attribute type with null id
+     * @throws RuntimeException raise exception if trying to create attribute type with null id
      */
     @Override
     public AttributeTypeDto update(@Valid AttributeType attributeType) throws  RuntimeException {
