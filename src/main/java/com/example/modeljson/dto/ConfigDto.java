@@ -23,7 +23,7 @@ public class ConfigDto extends AbstractEntityDtoConfig {
     private Boolean isCustom = Boolean.FALSE;
 
     @NonNull()
-    private String attributeId;
+    private Long attributeId;
 
-    private String parentId;
+    private Long parentId;
 }
