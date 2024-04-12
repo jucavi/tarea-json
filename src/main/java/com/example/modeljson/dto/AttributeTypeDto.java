@@ -19,9 +19,7 @@ public class AttributeTypeDto extends AbstractEntityDtoConfig {
 
     private Boolean enumDescription;
 
-    @NotNull
-    private Boolean isEnum = false;
+    private Boolean isEnum = Boolean.FALSE;
 
-    @NotNull
-    private Boolean isList = false;
+    private Boolean isList = Boolean.FALSE;
 }

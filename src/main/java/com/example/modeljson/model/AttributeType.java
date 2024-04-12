@@ -5,6 +5,7 @@ import com.example.modeljson.config.api.utils.AbstractEntityConfig;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
@@ -19,6 +20,7 @@ public class AttributeType extends AbstractEntityConfig<Long> {
     @Column(name = "ID")
     private Long id;
 
+    @NotNull
     @Column(name = "TYPE", nullable = false, unique = true)
     private String type;
 

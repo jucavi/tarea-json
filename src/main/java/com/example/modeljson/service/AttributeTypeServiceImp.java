@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
      * @throws RuntimeException if trying to create attribute type with not null id
      */
     @Override
-    public AttributeTypeDto create(@NonNull AttributeType attributeType) throws  RuntimeException {
+    public AttributeTypeDto create(@Valid AttributeType attributeType) throws  RuntimeException {
         log.info("Creating attribute type");
 
         if (attributeType.getId() != null) {
@@ -94,7 +95,7 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
      * @throws RuntimeException if trying to create attribute type with null id
      */
     @Override
-    public AttributeTypeDto update(AttributeType attributeType) throws  RuntimeException {
+    public AttributeTypeDto update(@Valid AttributeType attributeType) throws  RuntimeException {
         log.info("Updating attribute type");
 
         if (attributeType.getId() == null) {
