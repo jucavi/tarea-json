@@ -28,12 +28,12 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
     /**
      * Retrieve all attribute types from database
      *
-     * @return a list of attributes types dtos
+     * @return a list of attributes types
      */
     @Override
     public List<AttributeTypeDto> findAll() {
 
-        log.info("Retrieving all players from database");
+        log.info("Retrieving all players");
         return repository.findAll()
                 .stream()
                 .filter(attr -> !attr.getDeleted())
@@ -41,11 +41,15 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
                 .collect(Collectors.toList());
     }
 
-
+    /**
+     * Retrieve all attribute types from database even if soft deleted
+     *
+     * @return a list of attributes types even if marked as deleted
+     */
     @Override
     public List<AttributeTypeDto> findDeepAll() {
 
-        log.info("Retrieving all players from database");
+        log.info("Retrieving all players(deep)");
         return repository.findAll()
                 .stream()
                 .map(attr -> modelMapper.map(attr, AttributeTypeDto.class))
@@ -57,8 +61,8 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
      * Retrieve attribute type by identifier
      *
      * @param id attribute type identifier
-     * @return an attribute type dto
-     * @throws AttributeTypeNotFoundException raise exception if attribute type not found in database
+     * @return an attribute type
+     * @throws AttributeTypeNotFoundException if attribute type not found in database
      */
     @Override
     public AttributeTypeDto findById(@NonNull Long id) throws AttributeTypeNotFoundException {
@@ -75,10 +79,17 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
     }
 
 
+    /**
+     * Retrieve attribute type by identifier deep
+     *
+     * @param id attribute type identifier
+     * @return an attribute type
+     * @throws AttributeTypeNotFoundException if attribute type not found in database
+     */
     @Override
     public AttributeTypeDto findDeepById(Long id) {
 
-        log.info("Retrieving attribute type with id: {}", id);
+        log.info("Retrieving attribute type(deep) with id: {}", id);
 
         var attributeType = repository.findById(id);
 
@@ -93,9 +104,9 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
     /**
      * Create new attribute type
      *
-     * @param attributeType attribute type entity
-     * @return attribute type dto
-     * @throws RuntimeException raise exception if trying to create attribute type with not null id
+     * @param attributeType attribute type
+     * @return attribute type
+     * @throws RuntimeException if trying to create attribute type with not null id
      */
     @Override
     public AttributeTypeDto create(@Valid AttributeType attributeType) throws  RuntimeException {
@@ -123,12 +134,12 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
      * Update an attribute type for the given id
      *
      * <p>
-     * Only enum description can be updated.
+     * Only enum description, and deleted properties can be updated.
      * </p>
      *
      * @param attributeType attribute type
-     * @return attribute type dto
-     * @throws RuntimeException raise exception if trying to create attribute type with null id
+     * @return attribute type
+     * @throws RuntimeException if trying to create attribute type with null id
      */
     @Override
     public AttributeTypeDto update(AttributeType attributeType) throws  RuntimeException {
@@ -163,7 +174,8 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
 
 
     /**
-     * Remove an attribute type from database with the given id
+     * Remove an attribute type from database with the given id (soft deleted)
+     *
      * @param id attribute type identifier
      */
     @Override
