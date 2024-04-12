@@ -20,6 +20,8 @@ public class ConfigDto extends AbstractEntityDtoConfig {
 
     private String default_value;
 
+    private Boolean isCustom = Boolean.FALSE;
+
     @NonNull()
     private String attributeId;
 
