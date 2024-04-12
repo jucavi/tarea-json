@@ -5,6 +5,7 @@ import com.example.modeljson.error.notfound.AttributeTypeNotFoundException;
 import com.example.modeljson.error.notfound.AttributeTypeValueNotFoundException;
 import com.example.modeljson.error.notfound.ConfigNotFoundException;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -59,7 +60,7 @@ public class GlobalExceptionHandler {
         log.error(message);
 
         Map<String, String> errors = new HashMap<>();
-        errors.put("not-found", message);
+        errors.put("Missing", message);
 
         return ResponseEntity.unprocessableEntity().body(new AppError(
                 HttpStatus.NOT_FOUND,
@@ -77,10 +78,27 @@ public class GlobalExceptionHandler {
         log.error(message);
 
         Map<String, String> errors = new HashMap<>();
-        errors.put("system", message);
+        errors.put("System", message);
 
         return ResponseEntity.unprocessableEntity().body(new AppError(
                 HttpStatus.INTERNAL_SERVER_ERROR,
+                errors
+        ));
+    }
+
+    @ExceptionHandler({
+            NotImplementedException.class
+    })
+    public ResponseEntity<AppError> handleNotImplementedException(NotImplementedException ex) {
+
+        String message = ex.getMessage();
+        log.error(message);
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("System", message);
+
+        return ResponseEntity.unprocessableEntity().body(new AppError(
+                HttpStatus.ACCEPTED,
                 errors
         ));
     }

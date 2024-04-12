@@ -26,7 +26,7 @@ public class Config extends AbstractEntityConfig<Long> {
     @Column(name = "DEFAULT_VALUE", updatable = false)
     private String default_value;
 
-    @Column(name = "IS_CUSTOM")
+    @Column(name = "IS_CUSTOM", columnDefinition = "boolean default false")
     private Boolean isCustom = Boolean.FALSE;
 
     @NotNull
@@ -40,5 +40,4 @@ public class Config extends AbstractEntityConfig<Long> {
     @ManyToOne(fetch = FetchType.LAZY) // TODO: check orphan removes?
     @JoinColumn(name = "PARENT", referencedColumnName = "ID")
     private Config parent;
-
 }
