@@ -1,0 +1,16 @@
+package com.example.modeljson.model;
+
+public enum ProgressHiddenColumns {
+
+    COLLAPSE,
+    ITEM_CODE,
+    ROUTE_STEP_NAME,
+    WORKSTATION_PLANNED,
+    WORKSTATION_EXECUTED,
+    WORKSTATION_CERTIFIED,
+    OPERATOR_PLANNED,
+    OPERATOR_EXECUTED,
+    OPERATOR_CERTIFIED,
+    PROGRESS,
+    VALIDATION
+}
