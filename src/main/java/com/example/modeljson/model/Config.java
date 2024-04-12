@@ -2,7 +2,6 @@ package com.example.modeljson.model;
 
 
 import com.example.modeljson.config.api.utils.AbstractEntityConfig;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
