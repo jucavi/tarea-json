@@ -25,7 +25,6 @@ public class AttributeTypeValue extends AbstractEntityConfig<Long> {
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ATTRIBUTE_TYPE_ID", nullable = false)
     private AttributeType attribute_type;

@@ -23,7 +23,6 @@ public class Attribute extends AbstractEntityConfig<Long> {
     @Column(name = "NAME",nullable = false, unique = true)
     private String name;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ATTRIBUTE_TYPE_ID", referencedColumnName = "ID", nullable = false)
     private AttributeType attributeType;
