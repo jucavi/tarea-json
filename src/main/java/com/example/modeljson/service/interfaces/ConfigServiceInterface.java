@@ -1,4 +1,4 @@
-package com.example.modeljson.service;
+package com.example.modeljson.service.interfaces;
 
 
 import com.example.modeljson.dto.ConfigDto;
