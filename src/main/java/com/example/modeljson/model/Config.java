@@ -26,14 +26,12 @@ public class Config extends AbstractEntityConfig<Long> {
     @Column(name = "DEFAULT_VALUE")
     private String default_value;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ATTRIBUTE_ID", referencedColumnName = "ID", nullable = false)
     private Attribute attribute;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY) // TODO: check orphan removes?
-    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "PARENT", referencedColumnName = "ID")
     private Config parent;
 
 }
