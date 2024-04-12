@@ -26,6 +26,9 @@ public class Config extends AbstractEntityConfig<Long> {
     @Column(name = "DEFAULT_VALUE")
     private String default_value;
 
+    @Column(name = "IS_CUSTOM")
+    private Boolean isCustom = Boolean.FALSE;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ATTRIBUTE_ID", referencedColumnName = "ID", nullable = false)
     private Attribute attribute;
