@@ -5,6 +5,7 @@ import com.example.modeljson.config.api.utils.AbstractEntityConfig;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
@@ -22,14 +23,18 @@ public class Config extends AbstractEntityConfig<Long> {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "DEFAULT_VALUE")
+    @Column(name = "DEFAULT_VALUE", updatable = false)
     private String default_value;
 
     @Column(name = "IS_CUSTOM")
     private Boolean isCustom = Boolean.FALSE;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ATTRIBUTE_ID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "ATTRIBUTE_ID",
+            referencedColumnName = "ID",
+            nullable = false,
+            updatable = false)
     private Attribute attribute;
 
     @ManyToOne(fetch = FetchType.LAZY) // TODO: check orphan removes?

@@ -3,6 +3,7 @@ package com.example.modeljson.dto;
 import com.example.modeljson.config.api.utils.AbstractEntityDtoConfig;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -15,9 +16,9 @@ public class AttributeTypeValueDto extends AbstractEntityDtoConfig {
     private Long id;
 
     @NotNull
+    @NotBlank(message = "Value field can't be empty")
     private String value;
 
-    @NotNull
     private String description;
 
     @NotNull

@@ -2,10 +2,11 @@ package com.example.modeljson.model;
 
 
 import com.example.modeljson.config.api.utils.AbstractEntityConfig;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
@@ -20,10 +21,15 @@ public class Attribute extends AbstractEntityConfig<Long> {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "NAME",nullable = false, unique = true)
+    @NotNull
+    @NotBlank(message = "Name field can't be empty")
+    @Column(name = "NAME", nullable = false, unique = true)
     private String name;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ATTRIBUTE_TYPE_ID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "ATTRIBUTE_TYPE_ID",
+            referencedColumnName = "ID",
+            nullable = false)
     private AttributeType attributeType;
 }
