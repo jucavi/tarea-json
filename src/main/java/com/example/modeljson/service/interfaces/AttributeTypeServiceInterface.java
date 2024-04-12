@@ -1,16 +1,9 @@
 package com.example.modeljson.service.interfaces;
 
 
-import com.example.modeljson.dto.AttributeTypeDto;
+import com.example.modeljson.dto.attributetype.AttributeTypeDto;
 import com.example.modeljson.model.AttributeType;
 
-import java.util.List;
 
-public interface AttributeTypeServiceInterface {
-
-    List<AttributeTypeDto> findAll();
-    AttributeTypeDto findById(Long id);
-    AttributeTypeDto create(AttributeType attributeType);
-    AttributeTypeDto update(AttributeType attributeType);
-    void deleteById(Long id);
+public interface AttributeTypeServiceInterface extends Service<AttributeTypeDto, AttributeType> {
 }
