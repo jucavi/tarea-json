@@ -23,7 +23,9 @@ public class AttributeType extends AbstractEntityConfig<Long> {
 
     @NotNull
     @NotBlank(message = "Type field can't be empty")
-    @Column(name = "TYPE", nullable = false, unique = true)
+    @Column(name = "TYPE", nullable = false,
+            unique = true,
+            updatable = false)
     private String type;
 
     @Column(name = "ENUM_DESCRIPTION")
@@ -32,10 +34,10 @@ public class AttributeType extends AbstractEntityConfig<Long> {
     @Column(name = "IS_ENUM",
             nullable = false,
             updatable = false)
-    private Boolean isEnum = false;
+    private Boolean isEnum = Boolean.FALSE;
 
     @Column(name = "IS_LIST",
             nullable = false,
             updatable = false)
-    private Boolean isList = false;
+    private Boolean isList = Boolean.FALSE;
 }
