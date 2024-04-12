@@ -36,7 +36,7 @@ public class ConfigAssembler {
      * @param entity config entity
      * @return config data transfer object
      */
-    public static ConfigDto mapTomDto(@NonNull Config entity) {
+    public static ConfigDto mapToDto(@NonNull Config entity) {
 
         var configDto = new ConfigDto();
 
