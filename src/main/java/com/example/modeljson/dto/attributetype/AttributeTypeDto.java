@@ -1,4 +1,4 @@
-package com.example.modeljson.dto;
+package com.example.modeljson.dto.attributetype;
 
 import com.example.modeljson.config.api.utils.AbstractEntityDtoConfig;
 import lombok.*;
@@ -19,7 +19,7 @@ public class AttributeTypeDto extends AbstractEntityDtoConfig {
     @NotBlank(message = "Type field can't be empty")
     private String type;
 
-    private Boolean enumDescription;
+    private String enumDescription;
 
     private Boolean isEnum = Boolean.FALSE;
 
