@@ -1,4 +1,4 @@
-package com.example.modeljson.error;
+package com.example.modeljson.error.notfound;
 
 public class AttributeTypeNotFoundException extends RuntimeException {
 

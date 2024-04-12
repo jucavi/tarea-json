@@ -2,7 +2,7 @@ package com.example.modeljson.service;
 
 
 import com.example.modeljson.dto.AttributeTypeDto;
-import com.example.modeljson.error.AttributeTypeNotFoundException;
+import com.example.modeljson.error.notfound.AttributeTypeNotFoundException;
 import com.example.modeljson.model.AttributeType;
 import com.example.modeljson.repository.AttributeTypeRepository;
 import lombok.*;
