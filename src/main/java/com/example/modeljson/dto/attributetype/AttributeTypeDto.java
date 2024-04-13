@@ -1,6 +1,7 @@
 package com.example.modeljson.dto.attributetype;
 
 import com.example.modeljson.config.api.utils.AbstractEntityDtoConfig;
+import com.example.modeljson.dto.Mappeable;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AttributeTypeDto extends AbstractEntityDtoConfig {
+public class AttributeTypeDto extends AbstractEntityDtoConfig implements Mappeable {
 
     private Long id;
 
