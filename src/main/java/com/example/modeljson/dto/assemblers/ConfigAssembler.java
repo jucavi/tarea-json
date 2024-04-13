@@ -6,6 +6,9 @@ import com.example.modeljson.model.Config;
 import lombok.NonNull;
 import org.springframework.beans.BeanUtils;
 
+/**
+ * Assembler for Config mappings
+ */
 public class ConfigAssembler {
 
     /**
@@ -15,20 +18,20 @@ public class ConfigAssembler {
      */
     public static Config mapFromDto(@NonNull ConfigDto dto) {
 
-        var config = new Config();
+        var entity = new Config();
 
-        BeanUtils.copyProperties(dto, config, "attribute, parent");
-        config.setParent(
+        BeanUtils.copyProperties(dto, entity, "attribute, parent");
+        entity.setParent(
                 Config.builder()
                         .id(dto.getId())
                         .build());
 
-        config.setAttribute(
+        entity.setAttribute(
                 Attribute.builder()
                         .id(dto.getId())
                         .build());
 
-        return config;
+        return entity;
     }
 
     /**
@@ -38,12 +41,12 @@ public class ConfigAssembler {
      */
     public static ConfigDto mapToDto(@NonNull Config entity) {
 
-        var configDto = new ConfigDto();
+        var dto = new ConfigDto();
 
-        BeanUtils.copyProperties(configDto, entity, "attribute, parent");
-        configDto.setParentId(entity.getParent().getId());
-        configDto.setAttributeId(entity.getAttribute().getId());
+        BeanUtils.copyProperties(dto, entity, "attribute, parent");
+        dto.setParentId(entity.getParent().getId());
+        dto.setAttributeId(entity.getAttribute().getId());
 
-        return configDto;
+        return dto;
     }
 }
