@@ -4,8 +4,8 @@ import com.example.modeljson.dto.ConfigDto;
 import com.example.modeljson.error.notfound.AttributeTypeNotFoundException;
 import com.example.modeljson.error.notfound.ConfigNotFoundException;
 import com.example.modeljson.model.Config;
-import com.example.modeljson.repository.ConfigRepository;
-import com.example.modeljson.service.interfaces.ConfigServiceInterface;
+import com.example.modeljson.repository.IConfigRepository;
+import com.example.modeljson.service.interfaces.IConfigService;
 import com.example.modeljson.dto.assemblers.ConfigAssembler;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class ConfigServiceImp implements ConfigServiceInterface {
+public class ConfigServiceImp implements IConfigService {
 
-    private final ConfigRepository repository;
+    private final IConfigRepository repository;
 
     /**
      * Retrieve all config nodes from database

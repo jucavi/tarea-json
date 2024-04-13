@@ -4,8 +4,8 @@ package com.example.modeljson.service;
 import com.example.modeljson.dto.attributetype.AttributeTypeDto;
 import com.example.modeljson.error.notfound.AttributeTypeNotFoundException;
 import com.example.modeljson.model.AttributeType;
-import com.example.modeljson.repository.AttributeTypeRepository;
-import com.example.modeljson.service.interfaces.AttributeTypeServiceInterface;
+import com.example.modeljson.repository.IAttributeTypeRepository;
+import com.example.modeljson.service.interfaces.IAttributeTypeService;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
+public class AttributeTypeServiceImp implements IAttributeTypeService {
 
-    private final AttributeTypeRepository repository;
+    private final IAttributeTypeRepository repository;
     private final ModelMapper modelMapper;
 
 
@@ -161,9 +161,6 @@ public class AttributeTypeServiceImp implements AttributeTypeServiceInterface {
 
         var oldEntity = oldEntityOp.get();
         oldEntity.setEnumDescription(attributeType.getEnumDescription());
-
-        log.error("Update Error: {}", attributeType.getDeleted()); // TODO REMOVE
-        oldEntity.setDeleted(attributeType.getDeleted());
 
         AttributeType result;
         try {
