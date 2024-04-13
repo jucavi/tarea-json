@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IRdbms2JsonService {
 
-    void storeJson(@NonNull MultipartFile file);
+    void storeConfigJson(@NonNull MultipartFile file);
 
-    JsonNode buildJson();
+    JsonNode buildConfigJson();
 }
