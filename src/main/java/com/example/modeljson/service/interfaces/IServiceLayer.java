@@ -9,7 +9,7 @@ import java.util.List;
  * @param <S> Data Transfer Object Class 
  * @param <T> Data Access Object Class
  */
-public interface ServiceLayerInterface<S, T> {
+public interface IServiceLayer<S, T> {
     List<S> findAll();
     List<S> findDeepAll();
     S findById(Long id);

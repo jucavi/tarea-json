@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ConfigRepository extends JpaRepository<Config, Long> {
+public interface IConfigRepository extends JpaRepository<Config, Long> {
 
     /**
      * Find parent for given parent identifier

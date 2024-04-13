@@ -1,9 +1,9 @@
 package com.example.modeljson.repository;
 
-import com.example.modeljson.model.AttributeType;
+import com.example.modeljson.model.AttributeTypeValue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AttributeTypeRepository extends JpaRepository<AttributeType, Long> {
+public interface IAttributeTypeValueRepository extends JpaRepository<AttributeTypeValue, Long> {
 }
