@@ -5,7 +5,6 @@ import com.example.modeljson.config.api.utils.AbstractEntityConfig;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
@@ -29,7 +28,7 @@ public class Config extends AbstractEntityConfig<Long> {
     @Column(name = "IS_CUSTOM", columnDefinition = "boolean default false")
     private Boolean isCustom = Boolean.FALSE;
 
-    @NotNull
+    //@NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ATTRIBUTE_ID",
             referencedColumnName = "ID",
