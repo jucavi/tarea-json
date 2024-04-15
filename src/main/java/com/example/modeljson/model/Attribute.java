@@ -2,7 +2,6 @@ package com.example.modeljson.model;
 
 
 import com.example.modeljson.config.api.utils.AbstractEntityConfig;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,8 +26,8 @@ public class Attribute extends AbstractEntityConfig<Long> {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attribute_type",
-            nullable = false)
+    @JoinColumn(nullable = false,
+            updatable = false)
     private AttributeType attributeType;
 
     @Override

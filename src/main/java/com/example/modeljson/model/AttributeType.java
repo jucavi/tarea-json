@@ -7,7 +7,6 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Entity
 @Data
@@ -22,9 +21,7 @@ public class AttributeType extends AbstractEntityConfig<Long> {
 
     @NotNull
     @NotBlank(message = "Type field can't be empty")
-    @Column( nullable = false,
-            unique = true,
-            updatable = false)
+    @Column(nullable = false)
     private String type;
 
     @Column()

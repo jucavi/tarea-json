@@ -29,8 +29,7 @@ public class AttributeTypeValue extends AbstractEntityConfig<Long> {
     @JsonIgnore
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false,
-            updatable = false)
+    @JoinColumn(nullable = false)
     private AttributeType attributeType;
 
     @Override
