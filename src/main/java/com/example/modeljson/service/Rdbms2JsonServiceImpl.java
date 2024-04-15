@@ -8,6 +8,8 @@ import com.example.modeljson.repository.IConfigRepository;
 import com.example.modeljson.service.interfaces.IRdbms2JsonService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +17,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.SQLOutput;
 import java.util.*;
 
 @Service
@@ -31,6 +31,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
     private final IAttributeTypeRepository attributeTypeRepository;
     private final IAttributeTypeValueRepository attributeTypeValueRepository;
 
+    private final String REGEXP = "\\p{javaSpaceChar}*,\\p{javaSpaceChar}*";
 
     @Override
     public void storeConfigJson(@NonNull MultipartFile file) {
@@ -52,61 +53,98 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
 
     @Override
     public ObjectNode buildConfigJson() {
-
         ObjectMapper mapper = new ObjectMapper();
-
         // Only not deleted data
         List<Config> children = configRepository.findByParentNullAndDeletedFalse();
-
-        return this.traverse(children, mapper.createObjectNode());
+        return this.traverseBuild(children, mapper.createObjectNode());
     }
 
-    @Transactional
-    private ObjectNode traverse(List<Config> children, ObjectNode parent) {
+    //@Transactional
+    private ObjectNode traverseBuild(List<Config> children, ObjectNode parent) {
 
         for (Config child : children) {
 
             String attributeName = child.getAttribute().getName();
             String attributeValue = child.getDefaultValue();
-
             String type = child.getAttribute().getAttributeType().getType();
             Boolean isList = child.getAttribute().getAttributeType().getIsList();
             Boolean isEnum = child.getAttribute().getAttributeType().getIsEnum();
 
+            // Todo: check for is list
             switch (type) {
                 case "String": {
                     if (parent != null) {
-                        parent.put(attributeName, attributeValue);
+                        if (isList) {
+                            // do list stuff
+                        } else if (isEnum) {
+                            // do enum stuff
+                        } else {
+                            parent.put(attributeName, attributeValue);
+                        }
                     }
                     break;
                 }
                 case "Boolean": {
                     if (parent != null) {
-                        parent.put(attributeName, Boolean.valueOf(attributeValue));
+                        if (isList) {
+                        // do list stuff
+                        } else if (isEnum) {
+                            // do enum stuff
+                        } else {
+                            parent.put(attributeName, Boolean.valueOf(attributeValue));
+                        }
                     }
                     break;
                 }
                 case "Integer": {
                     if (parent != null) {
-                        parent.put(attributeName, Integer.valueOf(attributeValue));
+                        if (isList) {
+                            // do list stuff
+                        } else if (isEnum) {
+                            // do enum stuff
+                        } else {
+                            parent.put(attributeName, Integer.valueOf(attributeValue));
+                        }
                     }
                     break;
                 }
                 case "Double": {
                     if (parent != null) {
-                        parent.put(attributeName, Double.valueOf(attributeValue));
+                        if (isList) {
+                            // do list stuff
+                        } else if (isEnum) {
+                            // do enum stuff
+                        } else {
+                            parent.put(attributeName, Double.valueOf(attributeValue));
+                        }
                     }
                     break;
                 }
                 case "List": {
-                    System.out.println("List");
+                    if (!attributeValue.isEmpty()) {
+                        var arrValue = attributeValue.split(REGEXP);
+                        parent.put(attributeName, Arrays.toString(arrValue));
+                    } else {
+                        // get all children with isList = True
+                        ObjectMapper mapper = new ObjectMapper();
+
+                        List<Config> listChildren = configRepository.findByParentIdAndDeletedFalse(child.getId());
+                        //ArrayNode arrayNode = mapper.convertValue(listChildren, ArrayNode.class);
+                        ArrayNode arrayNode = new ArrayNode(JsonNodeFactory.instance);
+
+                        // traverse children
+                        if (parent != null) {
+                            ArrayNode nestedNode = parent.putArray(attributeName).addAll(arrayNode);
+                            this.traverseBuild(listChildren, mapper.valueToTree(nestedNode));
+                        }
+                    }
                 }
                 case "Object": {
-                    if (parent != null) {
+                    if (parent != null && !isList) {
                         // Child is now parent
                         List<Config> currentChildren = configRepository.findByParentId(child.getId());
                         ObjectNode nestedNode = parent.putObject(attributeName);
-                        this.traverse(currentChildren, nestedNode);
+                        this.traverseBuild(currentChildren, nestedNode);
                     }
                     break;
                 }
@@ -115,6 +153,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                         System.out.println("Is List");
                     } else if (isEnum) {
                         System.out.println("Is Enum");
+
                     }
                 }
             }
