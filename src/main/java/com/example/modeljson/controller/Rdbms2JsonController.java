@@ -24,4 +24,9 @@ public class Rdbms2JsonController {
         return ResponseEntity.ok().build();
 
     }
+
+    @GetMapping("/load")
+    public ResponseEntity<?> loadConfigJson() {
+        return ResponseEntity.ok(service.buildConfigJson());
+    }
 }

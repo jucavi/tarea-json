@@ -17,4 +17,5 @@ public interface IServiceLayer<S, T> {
     S create(T attributeType);
     S update(T attributeType);
     void deleteById(Long id);
+    void deleteDeepById(Long id);
 }

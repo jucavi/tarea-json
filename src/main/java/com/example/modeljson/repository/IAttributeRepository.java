@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface IAttributeRepository extends JpaRepository<Attribute, Long> {
+    Optional<Attribute> findByIdAndDeletedFalse(String attributeName);
     Optional<Attribute> findByName(String attributeName);
 }

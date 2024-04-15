@@ -1,6 +1,7 @@
 package com.example.modeljson.service;
 
 
+import com.example.modeljson.dto.assemblers.AttributeTypeAssembler;
 import com.example.modeljson.dto.attributetype.AttributeTypeDto;
 import com.example.modeljson.error.notfound.AttributeTypeNotFoundException;
 import com.example.modeljson.model.AttributeType;
@@ -26,7 +27,7 @@ public class AttributeTypeServiceImpl implements IAttributeTypeService {
 
 
     /**
-     * Retrieve all attribute types from database
+     * Retrieve(soft) all attribute types from database, only those with deleted = false)
      *
      * @return a list of attributes types
      */
@@ -42,7 +43,7 @@ public class AttributeTypeServiceImpl implements IAttributeTypeService {
     }
 
     /**
-     * Retrieve all attribute types from database even if soft deleted
+     * Retrieve(deep) all attribute types from database even if soft deleted
      *
      * @return a list of attributes types even if marked as deleted
      */
@@ -58,7 +59,7 @@ public class AttributeTypeServiceImpl implements IAttributeTypeService {
 
 
     /**
-     * Retrieve attribute type by identifier
+     * Retrieve(soft) attribute type by identifier
      *
      * @param id attribute type identifier
      * @return an attribute type
@@ -80,7 +81,7 @@ public class AttributeTypeServiceImpl implements IAttributeTypeService {
 
 
     /**
-     * Retrieve attribute type by identifier deep
+     * Retrieve(deep) attribute type by identifier
      *
      * @param id attribute type identifier
      * @return an attribute type
@@ -156,9 +157,6 @@ public class AttributeTypeServiceImpl implements IAttributeTypeService {
             throw new AttributeTypeNotFoundException("Attribute type entity not found");
         }
 
-        System.out.println(oldEntityOp.get()); // TODO REMOVE
-        System.out.println(attributeType); // TODO REMOVE
-
         var oldEntity = oldEntityOp.get();
         oldEntity.setEnumDescription(attributeType.getEnumDescription());
 
@@ -176,7 +174,7 @@ public class AttributeTypeServiceImpl implements IAttributeTypeService {
 
 
     /**
-     * Remove an attribute type from database with the given id (soft deleted)
+     * Remove(soft) an attribute type from database with the given id
      *
      * @param id attribute type identifier
      */
@@ -194,5 +192,10 @@ public class AttributeTypeServiceImpl implements IAttributeTypeService {
         entity.setDeleted(true);
 
         repository.save(entity);
+    }
+
+    @Override
+    public void deleteDeepById(Long id) {
+        throw new RuntimeException("Not implemented yet");
     }
 }

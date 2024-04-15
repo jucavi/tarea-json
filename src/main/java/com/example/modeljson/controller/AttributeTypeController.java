@@ -84,7 +84,7 @@ public class AttributeTypeController {
         System.out.println("entity = " + entity);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(service.update(
-                        AttributeTypeAssembler.mapFromDto(attributeTypeUpdateDto)));
+                        AttributeTypeAssembler.mapFromDto(attributeTypeUpdateDto))) ;
     }
 
 

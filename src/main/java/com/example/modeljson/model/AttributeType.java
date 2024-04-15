@@ -7,10 +7,10 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,26 +18,34 @@ public class AttributeType extends AbstractEntityConfig<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
     private Long id;
 
     @NotNull
     @NotBlank(message = "Type field can't be empty")
-    @Column(name = "TYPE", nullable = false,
+    @Column( nullable = false,
             unique = true,
             updatable = false)
     private String type;
 
-    @Column(name = "ENUM_DESCRIPTION")
+    @Column()
     private String enumDescription;
 
-    @Column(name = "IS_ENUM",
-            nullable = false,
+    @Column(nullable = false,
             updatable = false)
     private Boolean isEnum = Boolean.FALSE;
 
-    @Column(name = "IS_LIST",
-            nullable = false,
+    @Column(nullable = false,
             updatable = false)
     private Boolean isList = Boolean.FALSE;
+
+    @Override
+    public String toString() {
+        return "AttributeType{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                ", enumDescription='" + enumDescription + '\'' +
+                ", isEnum=" + isEnum +
+                ", isList=" + isList +
+                '}';
+    }
 }

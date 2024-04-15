@@ -10,7 +10,6 @@ import com.example.modeljson.dto.assemblers.ConfigAssembler;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 
 
@@ -127,7 +126,7 @@ public class ConfigServiceImpl implements IConfigService {
 
     @Override
     public ConfigDto update(Config config) {
-        throw new NotImplementedException("Update not supported");
+        throw new RuntimeException("Update not supported");
     }
 
 
@@ -138,6 +137,11 @@ public class ConfigServiceImpl implements IConfigService {
      */
     @Override
     public void deleteById(Long id) {
-        throw new NotImplementedException("Sorry, not implemented yet");
+        throw new RuntimeException("Sorry, not implemented yet");
+    }
+
+    @Override
+    public void deleteDeepById(Long id) {
+        throw new RuntimeException("Not implemented yet");
     }
 }
