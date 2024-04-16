@@ -1,5 +1,6 @@
 package com.example.modeljson.service;
 
+import com.example.modeljson.model.AttributeTypeValue;
 import com.example.modeljson.model.Config;
 import com.example.modeljson.repository.IConfigRepository;
 import com.example.modeljson.service.interfaces.IRdbms2JsonService;
@@ -13,8 +14,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,43 +26,68 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
     private final IConfigRepository configRepository;
     private final ObjectMapper objectMapper;
 
+
+    /**
+     * Loads json config into database
+     *
+     * @param file json config file
+     */
     @Override
     public void storeConfigJson(@NonNull MultipartFile file) {
-        try {
-            InputStreamReader reader = new InputStreamReader(file.getInputStream());
-            //traverse(null, objectMapper.readTree(reader));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        throw new RuntimeException("Not implemented yet");
+//        try {
+//            InputStreamReader reader = new InputStreamReader(file.getInputStream());
+//            //traverse(null, objectMapper.readTree(reader));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 
+
+    /**
+     * Create JsonNode from data stored in database, ignoring soft deleted data
+     *
+     * @return json config
+     */
     @Override
     public ObjectNode buildConfigJson() {
-        // Only not deleted data
+        // Ignore soft deleted data
         List<Config> children = configRepository.findByParentNullAndDeletedFalse();
         return this.traverseBuild(children, objectMapper.createObjectNode());
     }
 
-    //@Transactional
+    /**
+     * Traverse all configuration data stored and create Json objet representation
+     *
+     * @param children list of configs tuples from the same parent (relational database parent)
+     * @param parent object node container
+     * @return object node with all children info parsed as json
+     */
     private ObjectNode traverseBuild(List<Config> children, ObjectNode parent) {
 
         for (Config child : children) {
 
-            String attributeName = child.getAttribute().getName();
             String attributeValue = child.getDefaultValue();
-            String type = child.getAttribute().getAttributeType().getType();
-            Boolean isList = child.getAttribute().getAttributeType().getIsList();
+            String attributeName = child
+                    .getAttribute()
+                    .getName();
+            String type = child.getAttribute()
+                    .getAttributeType()
+                    .getType();
+            Boolean isList = child
+                    .getAttribute()
+                    .getAttributeType()
+                    .getIsList();
+            Boolean isEnum = child
+                    .getAttribute()
+                    .getAttributeType()
+                    .getIsEnum();
 
-            // Check if it is a valid enum
-            Boolean isEnum = child.getAttribute().getAttributeType().getIsEnum();
 
-
-            if (isEnum) {
-                // TODO: LOGIC
-                // Check enum validation validateEnumValue(AttributeType type, String attributeValue)
-                // else log error and continue
-            }
+            // Check if it is a valid enum value
+            // Better send isEnum  to createNode as parameter
+            isValidEnumValue(child, isEnum, attributeValue);
 
             // Todo: big try/catch?
             switch (type) {
@@ -87,8 +111,8 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                         assert parent != null;
                         List<Config> currentChildren = configRepository.findByParentId(child.getId());
                         if (isList) {
-                            ArrayNode nestedArray = parent.putArray(attributeName);
-                            fillArrayObjectsNode(currentChildren, nestedArray); // fill with objects built with children configs
+                            ArrayNode currentParent = parent.putArray(attributeName);
+                            fillArrayObjectsNode(currentChildren, currentParent); // fill with objects built with children configs
 
                         } else { // simple value
                             ObjectNode nestedNode = parent.putObject(attributeName);
@@ -105,10 +129,21 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
         return parent;
     }
 
-    // Why use @NonNull
+    private void isValidEnumValue(Config child, Boolean isEnum, String attributeValue) {
+        if (isEnum) {
+            List<AttributeTypeValue> enumValues = child
+                    .getAttribute()
+                    .getAttributeType()
+                    .getAttributeTypeValueList();
+            if (enumValues.stream().noneMatch(e -> e.getValue().equalsIgnoreCase(attributeValue))) {
+                throw new AssertionError(); // TODO: REVIEW
+            }
+        }
+    }
 
+    // Why use @NonNull
     /**
-     * Make a list of object arrays
+     * Overrides parent object with a list of object nodes generated with children information
      *
      * @param children list of config elements with isList in attributeType checked
      * @param parent parent node
@@ -118,7 +153,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
 
         try {
             assert parent != null;
-            traverseBuild(children, objectNode);
+            traverseBuild(children, objectNode); // return an object { key1: [1,2,3,...,9], key2: {a,b,c,...,i}}
             zipObjectNode(objectNode, parent);
         } catch (Exception ex) {
             log.error("Error creating array nested object: {}", ex.getMessage());
@@ -126,10 +161,10 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
     }
 
     /**
-     * Zip elements, truncate values to min size of elements present
+     * Overrides parent node, Zip elements and create a
      *
-     * @param objectNode object node
-     * @param parent node
+     * @param objectNode object node, object arrays as values
+     * @param parent array node container
      */
     private void zipObjectNode(ObjectNode objectNode, ArrayNode parent) {
 
