@@ -3,6 +3,7 @@ package com.example.modeljson.service;
 import com.example.modeljson.model.Config;
 import com.example.modeljson.repository.IConfigRepository;
 import com.example.modeljson.service.interfaces.IRdbms2JsonService;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -15,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,9 +26,6 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
 
     private final IConfigRepository configRepository;
     private final ObjectMapper objectMapper;
-//    private final IAttributeRepository attributeRepository;
-//    private final IAttributeTypeRepository attributeTypeRepository;
-//    private final IAttributeTypeValueRepository attributeTypeValueRepository;
 
     @Override
     public void storeConfigJson(@NonNull MultipartFile file) {
@@ -42,14 +42,11 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
     public ObjectNode buildConfigJson() {
         // Only not deleted data
         List<Config> children = configRepository.findByParentNullAndDeletedFalse();
-        return this.traverseBuild(children, objectMapper.createObjectNode(), null, null);
+        return this.traverseBuild(children, objectMapper.createObjectNode());
     }
 
     //@Transactional
-    private ObjectNode traverseBuild(List<Config> children, ObjectNode parent, Integer index, List<String> collection) {
-
-        List<String> collectionStrValues = new ArrayList<>();
-        String REGEXP = "\\p{javaSpaceChar}*,\\p{javaSpaceChar}*";
+    private ObjectNode traverseBuild(List<Config> children, ObjectNode parent) {
 
         for (Config child : children) {
 
@@ -61,85 +58,44 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
             // Check if it is a valid enum
             Boolean isEnum = child.getAttribute().getAttributeType().getIsEnum();
 
-            if (isList && attributeValue != null) {
-                collectionStrValues = Arrays.asList(attributeValue.strip().split(REGEXP));
+
+            if (isEnum) {
+                // TODO: LOGIC
+                // Check enum validation validateEnumValue(AttributeType type, String attributeValue)
+                // else log error and continue
             }
 
             // Todo: big try/catch?
             switch (type) {
                 case "String": {
-                    try {
-                        assert parent != null;
-                        if (isList) {
-                            ArrayNode nodeArray = parent.putArray(attributeName);
-                            nodeArray.addAll((ArrayNode) objectMapper.valueToTree(collectionStrValues));
-
-                        } else { // simple value
-                            parent.put(attributeName, attributeValue);
-                        }
-                    } catch (Exception ex) {
-                        log.error(ex.getMessage());
-                    }
+                    createNode(parent, isList, attributeName, attributeValue, String::valueOf);
                     break;
                 }
                 case "Boolean": {
-                    try {
-                        assert parent != null;
-                        if (isList) {
-                            ArrayNode nodeArray = parent.putArray(attributeName);
-                            nodeArray.addAll((ArrayNode) objectMapper
-                                    .valueToTree(
-                                            collectionStrValues.stream().map(Boolean::valueOf)));
-
-                        } else { // simple value
-                            parent.put(attributeName, Boolean.valueOf(attributeValue));
-                        }
-                    } catch (Exception ex) {
-                        log.error(ex.getMessage());
-                    }
+                    createNode(parent, isList, attributeName, attributeValue, Boolean::valueOf);
                     break;
                 }
                 case "Integer": {
-                    try {
-                        assert parent != null;
-                        if (isList) {
-                            ArrayNode nodeArray = parent.putArray(attributeName);
-                            nodeArray.addAll((ArrayNode) objectMapper
-                                    .valueToTree(
-                                            collectionStrValues.stream().map(Integer::valueOf)));
-
-                        } else { // simple value
-                            parent.put(attributeName, Integer.valueOf(attributeValue));
-                        }
-                    } catch (Exception ex) {
-                        log.error(ex.getMessage());
-                    }
+                    createNode(parent, isList, attributeName, attributeValue, Integer::valueOf);
                     break;
                 }
                 case "Double": {
-                    try {
-                        assert parent != null;
-                        if (isList) {
-                            ArrayNode nodeArray = parent.putArray(attributeName);
-                            nodeArray.addAll((ArrayNode) objectMapper
-                                    .valueToTree(
-                                            collectionStrValues.stream().map(Double::valueOf)));
-
-                        } else { // simple value
-                            parent.put(attributeName, Double.valueOf(attributeValue));
-                        }
-                    } catch (Exception ex) {
-                        log.error(ex.getMessage());
-                    }
+                    createNode(parent, isList, attributeName, attributeValue, Double::valueOf);
                 }
                 case "Object": {
-                    if (parent != null && !isList) {
-                        // Child is now parent
+                    try {
+                        assert parent != null;
                         List<Config> currentChildren = configRepository.findByParentId(child.getId());
-                        ObjectNode nestedNode = parent.putObject(attributeName);
-                        this.traverseBuild(currentChildren, nestedNode, null, null);
-                    } else if (isList) {
+                        if (isList) {
+                            ArrayNode nestedArray = parent.putArray(attributeName);
+                            fillArrayObjectsNode(currentChildren, nestedArray); // fill with objects built with children configs
 
+                        } else { // simple value
+                            ObjectNode nestedNode = parent.putObject(attributeName);
+                            this.traverseBuild(currentChildren, nestedNode);
+                        }
+                    } catch (Exception ex) {
+                        log.error("*** Error while 'object' node creation: {}", ex.getMessage());
                     }
                     break;
                 }
@@ -147,6 +103,89 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
         }
 
         return parent;
+    }
+
+    // Why use @NonNull
+
+    /**
+     * Make a list of object arrays
+     *
+     * @param children list of config elements with isList in attributeType checked
+     * @param parent parent node
+     */
+    private void fillArrayObjectsNode(List<Config> children, ArrayNode parent) {
+        ObjectNode objectNode = objectMapper.createObjectNode();
+
+        try {
+            assert parent != null;
+            traverseBuild(children, objectNode);
+            zipObjectNode(objectNode, parent);
+        } catch (Exception ex) {
+            log.error("Error creating array nested object: {}", ex.getMessage());
+        }
+    }
+
+    /**
+     * Zip elements, truncate values to min size of elements present
+     *
+     * @param objectNode object node
+     * @param parent node
+     */
+    private void zipObjectNode(ObjectNode objectNode, ArrayNode parent) {
+
+        var fields = objectNode.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            String key = field.getKey();
+            ArrayNode values = (ArrayNode) field.getValue();
+
+            for (int i = 0; i < values.size(); i++) {
+                if (parent.size() <= i) {
+                    parent.add(objectMapper.createObjectNode().set(key, values.get(i)));
+                } else {
+                    ((ObjectNode) parent.get(i)).set(key, values.get(i));
+                }
+            };
+            
+        }
+    }
+
+    /**
+     * Create and insert a node in parent object node
+     *
+     * <p>
+     *     USAGE: createNode(parent, isList, attributeName, attributeValue, Double::valueOf);
+     * </p>
+     *
+     * @param parent parent object node
+     * @param isList {@code true} if it is a list node, otherwise false
+     * @param attributeName tag name
+     * @param attributeValue value of attribute as string
+     * @param function function required for mapping values
+     */
+    private void createNode(ObjectNode parent,
+                            Boolean isList,
+                            String attributeName,
+                            String attributeValue,
+                            Function<String, Object> function) {
+        try {
+            // parent cant be null
+            assert parent != null;
+
+            String REGEXP = "\\p{javaSpaceChar}*,\\p{javaSpaceChar}*";
+
+            if (isList) {
+                ArrayNode nodeArray = parent.putArray(attributeName);
+                var localCollection = Arrays.stream(attributeValue.strip().split(REGEXP)).map(function).collect(Collectors.toList());
+                nodeArray.addAll((ArrayNode) objectMapper.valueToTree(localCollection));
+
+            } else { // simple node value
+                parent.put(attributeName, attributeValue);
+            }
+
+        } catch (Exception ex) {
+            log.error("*** Error while 'simple' node creation: {}", ex.getMessage());
+        }
     }
 
 
