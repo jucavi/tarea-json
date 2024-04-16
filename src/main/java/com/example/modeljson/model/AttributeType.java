@@ -13,6 +13,9 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(uniqueConstraints = {@UniqueConstraint(
+        columnNames = {"type", "isList", "isEnum"}
+)})
 public class AttributeType extends AbstractEntityConfig<Long> {
 
     @Id
@@ -24,7 +27,6 @@ public class AttributeType extends AbstractEntityConfig<Long> {
     @Column(nullable = false)
     private String type;
 
-    @Column()
     private String enumDescription;
 
     @Column(nullable = false,
@@ -34,15 +36,4 @@ public class AttributeType extends AbstractEntityConfig<Long> {
     @Column(nullable = false,
             updatable = false)
     private Boolean isList = Boolean.FALSE;
-
-    @Override
-    public String toString() {
-        return "AttributeType{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", enumDescription='" + enumDescription + '\'' +
-                ", isEnum=" + isEnum +
-                ", isList=" + isList +
-                '}';
-    }
 }

@@ -27,23 +27,15 @@ public class Config extends AbstractEntityConfig<Long> {
     private Boolean isCustom = Boolean.FALSE;
 
     //@NotNull
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "attribute_id",
             nullable = false,
             updatable = false)
     private Attribute attribute;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER) // TODO: check orphan removes?
     @JoinColumn(name = "parent")
     private Config parent;
-
-    @Override
-    public String toString() {
-        return "Config{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", defaultValue='" + defaultValue + '\'' +
-                ", isCustom=" + isCustom +
-                '}';
-    }
 }

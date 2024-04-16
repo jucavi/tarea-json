@@ -25,16 +25,9 @@ public class Attribute extends AbstractEntityConfig<Long> {
     private String name;
 
     @NotNull
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attribute_type", nullable = false,
             updatable = false)
     private AttributeType attributeType;
-
-    @Override
-    public String toString() {
-        return "Attribute{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

@@ -26,18 +26,10 @@ public class AttributeTypeValue extends AbstractEntityConfig<Long> {
     @Column()
     private String description;
 
-    @JsonIgnore
     @NonNull
+    @JsonIgnore
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private AttributeType attributeType;
-
-    @Override
-    public String toString() {
-        return "AttributeTypeValue{" +
-                "id=" + id +
-                ", value='" + value + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
 }
