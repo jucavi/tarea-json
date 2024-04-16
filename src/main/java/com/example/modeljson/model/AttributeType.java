@@ -7,6 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Data
@@ -36,4 +37,7 @@ public class AttributeType extends AbstractEntityConfig<Long> {
     @Column(nullable = false,
             updatable = false)
     private Boolean isList = Boolean.FALSE;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "attributeType")
+    private List<AttributeTypeValue> attributeTypeValueList;
 }
