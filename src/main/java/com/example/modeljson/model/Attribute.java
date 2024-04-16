@@ -26,7 +26,7 @@ public class Attribute extends AbstractEntityConfig<Long> {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false,
+    @JoinColumn(name = "attribute_type", nullable = false,
             updatable = false)
     private AttributeType attributeType;
 

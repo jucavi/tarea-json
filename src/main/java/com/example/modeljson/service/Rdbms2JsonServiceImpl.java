@@ -27,6 +27,7 @@ import java.util.*;
 public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
 
     private final IConfigRepository configRepository;
+    private final ObjectMapper objectMapper;
     private final IAttributeRepository attributeRepository;
     private final IAttributeTypeRepository attributeTypeRepository;
     private final IAttributeTypeValueRepository attributeTypeValueRepository;
@@ -121,21 +122,22 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                     break;
                 }
                 case "List": {
-                    if (!attributeValue.isEmpty()) {
-                        var arrValue = attributeValue.split(REGEXP);
-                        parent.put(attributeName, Arrays.toString(arrValue));
-                    } else {
-                        // get all children with isList = True
-                        ObjectMapper mapper = new ObjectMapper();
+                    if (parent != null) {
+                        ArrayNode currArray  = parent.putArray(attributeName);
 
-                        List<Config> listChildren = configRepository.findByParentIdAndDeletedFalse(child.getId());
-                        //ArrayNode arrayNode = mapper.convertValue(listChildren, ArrayNode.class);
-                        ArrayNode arrayNode = new ArrayNode(JsonNodeFactory.instance);
-
-                        // traverse children
-                        if (parent != null) {
-                            ArrayNode nestedNode = parent.putArray(attributeName).addAll(arrayNode);
-                            this.traverseBuild(listChildren, mapper.valueToTree(nestedNode));
+                        if (attributeValue != null && !attributeValue.isEmpty()) {
+                            String[] arrValue = attributeValue.split(REGEXP);
+                        } else {
+//                            // get all children with isList = True
+//                            ObjectMapper mapper = new ObjectMapper();
+//
+//                            List<Config> listChildren = configRepository.findByParentIdAndDeletedFalse(child.getId());
+//                            //ArrayNode arrayNode = mapper.convertValue(listChildren, ArrayNode.class);
+//                            ArrayNode arrayNode = new ArrayNode(JsonNodeFactory.instance);
+//
+//                            // traverse children
+//                            ArrayNode nestedNode = parent.putArray(attributeName).addAll(arrayNode);
+//                            this.traverseBuild(listChildren, mapper.valueToTree(nestedNode));
                         }
                     }
                 }
