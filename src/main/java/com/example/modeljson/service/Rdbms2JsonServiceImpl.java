@@ -57,13 +57,15 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
             String attributeValue = child.getDefaultValue();
             String type = child.getAttribute().getAttributeType().getType();
             Boolean isList = child.getAttribute().getAttributeType().getIsList();
+
+            // Check if it is a valid enum
             Boolean isEnum = child.getAttribute().getAttributeType().getIsEnum();
 
             if (isList && attributeValue != null) {
                 collectionStrValues = Arrays.asList(attributeValue.strip().split(REGEXP));
             }
 
-            // Todo: check for is list
+            // Todo: big try/catch?
             switch (type) {
                 case "String": {
                     try {
@@ -136,6 +138,8 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                         List<Config> currentChildren = configRepository.findByParentId(child.getId());
                         ObjectNode nestedNode = parent.putObject(attributeName);
                         this.traverseBuild(currentChildren, nestedNode, null, null);
+                    } else if (isList) {
+
                     }
                     break;
                 }
