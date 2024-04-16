@@ -212,7 +212,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
             if (isList) {
                 ArrayNode nodeArray = parent.putArray(attributeName);
                 var localCollection = Arrays.stream(attributeValue.strip().split(REGEXP)).map(function).collect(Collectors.toList());
-                nodeArray.addAll(objectMapper.valueToTree(localCollection));
+                nodeArray.addAll((ArrayNode) objectMapper.valueToTree(localCollection));
 
             } else { // simple node value
                 parent.put(attributeName, attributeValue);
