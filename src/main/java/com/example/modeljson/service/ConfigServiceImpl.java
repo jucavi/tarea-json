@@ -1,7 +1,6 @@
 package com.example.modeljson.service;
 
 import com.example.modeljson.dto.ConfigDto;
-import com.example.modeljson.error.notfound.AttributeTypeNotFoundException;
 import com.example.modeljson.error.notfound.ConfigNotFoundException;
 import com.example.modeljson.model.Config;
 import com.example.modeljson.repository.IConfigRepository;
@@ -59,8 +58,8 @@ public class ConfigServiceImpl implements IConfigService {
      * Retrieve config node by identifier
      *
      * @param id config node identifier
-     * @return an config node
-     * @throws AttributeTypeNotFoundException if config node not found in database
+     * @return config node
+     * @throws ConfigNotFoundException if config node not found in database
      */
     @Override
     public ConfigDto findById(@NonNull Long id) throws ConfigNotFoundException {
@@ -70,7 +69,7 @@ public class ConfigServiceImpl implements IConfigService {
         var config = repository.findById(id);
 
         if (config.isEmpty() || config.get().getDeleted()) {
-            throw new ConfigNotFoundException("Config node not found.");
+            throw new ConfigNotFoundException();
         }
 
         return ConfigAssembler.mapToDto(config.get());
@@ -80,8 +79,8 @@ public class ConfigServiceImpl implements IConfigService {
      * Retrieve config node by identifier deep
      *
      * @param id config node identifier
-     * @return a config node
-     * @throws AttributeTypeNotFoundException if config node not found in database
+     * @return config node
+     * @throws ConfigNotFoundException if config node not found in database
      */
     @Override
     public ConfigDto findDeepById(Long id) throws ConfigNotFoundException {
@@ -91,7 +90,7 @@ public class ConfigServiceImpl implements IConfigService {
         var config = repository.findById(id);
 
         if (config.isEmpty()) {
-            throw new ConfigNotFoundException("Config node not found.");
+            throw new ConfigNotFoundException();
         }
 
         return ConfigAssembler.mapToDto(config.get());
