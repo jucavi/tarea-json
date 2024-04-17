@@ -1,5 +1,6 @@
 package com.example.modeljson.service;
 
+import com.example.modeljson.error.notfound.EnumeratedValueNotFound;
 import com.example.modeljson.model.AttributeTypeValue;
 import com.example.modeljson.model.Config;
 import com.example.modeljson.repository.IConfigRepository;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
 
-    private final IConfigRepository configRepository;
+    private final IConfigRepository repository;
     private final ObjectMapper objectMapper;
 
 
@@ -53,7 +54,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
     @Override
     public ObjectNode buildConfigJson() {
         // Ignore soft deleted data
-        List<Config> children = configRepository.findByParentNullAndDeletedFalse();
+        List<Config> children = repository.findByParentNullAndDeletedFalse();
         return this.traverseBuild(children, objectMapper.createObjectNode());
     }
 
@@ -89,7 +90,6 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
             // Better send isEnum  to createNode as parameter
             isValidEnumValue(child, isEnum, attributeValue);
 
-            // Todo: big try/catch?
             switch (type) {
                 case "String": {
                     createNode(parent, isList, attributeName, attributeValue, String::valueOf);
@@ -109,7 +109,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                 case "Object": {
                     try {
                         assert parent != null;
-                        List<Config> currentChildren = configRepository.findByParentId(child.getId());
+                        List<Config> currentChildren = repository.findByParentIdAndDeletedFalse(child.getId());
                         if (isList) {
                             ArrayNode currentParent = parent.putArray(attributeName);
                             fillArrayObjectsNode(currentChildren, currentParent); // fill with objects built with children configs
@@ -119,7 +119,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                             this.traverseBuild(currentChildren, nestedNode);
                         }
                     } catch (Exception ex) {
-                        log.error("*** Error while 'object' node creation: {}", ex.getMessage());
+                        log.error("*** Error occurred in 'object' node creation: {}", ex.getMessage());
                     }
                     break;
                 }
@@ -136,7 +136,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                     .getAttributeType()
                     .getAttributeTypeValueList();
             if (enumValues.stream().noneMatch(e -> e.getValue().equalsIgnoreCase(attributeValue))) {
-                throw new AssertionError(); // TODO: REVIEW
+                throw new EnumeratedValueNotFound(); // TODO: REVIEW
             }
         }
     }
@@ -154,7 +154,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
         try {
             assert parent != null;
             traverseBuild(children, objectNode); // return an object { key1: [1,2,3,...,9], key2: {a,b,c,...,i}}
-            zipObjectNode(objectNode, parent);
+            zipObjectsNodes(objectNode, parent);
         } catch (Exception ex) {
             log.error("Error creating array nested object: {}", ex.getMessage());
         }
@@ -166,7 +166,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
      * @param objectNode object node, object arrays as values
      * @param parent array node container
      */
-    private void zipObjectNode(ObjectNode objectNode, ArrayNode parent) {
+    private void zipObjectsNodes(ObjectNode objectNode, ArrayNode parent) {
 
         var fields = objectNode.fields();
         while (fields.hasNext()) {
@@ -211,15 +211,22 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
 
             if (isList) {
                 ArrayNode nodeArray = parent.putArray(attributeName);
-                var localCollection = Arrays.stream(attributeValue.strip().split(REGEXP)).map(function).collect(Collectors.toList());
-                nodeArray.addAll((ArrayNode) objectMapper.valueToTree(localCollection));
+                var localCollection = Arrays
+                        .stream(attributeValue
+                                .strip().
+                                split(REGEXP))
+                        .map(function)
+                        .collect(Collectors.toList());
+                nodeArray.addAll((ArrayNode) objectMapper
+                        .valueToTree(localCollection));
 
             } else { // simple node value
-                parent.put(attributeName, attributeValue);
+                var value = function.apply(attributeValue);
+                parent.set(attributeName, objectMapper.valueToTree(value));
             }
 
         } catch (Exception ex) {
-            log.error("*** Error while 'simple' node creation: {}", ex.getMessage());
+            log.error("*** Error occurred in 'simple' node creation: {}", ex.getMessage());
         }
     }
 
