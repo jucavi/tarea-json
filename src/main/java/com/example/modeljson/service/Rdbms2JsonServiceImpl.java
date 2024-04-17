@@ -136,7 +136,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                     .getAttributeType()
                     .getAttributeTypeValueList();
             if (enumValues.stream().noneMatch(e -> e.getValue().equalsIgnoreCase(attributeValue))) {
-                throw new EnumeratedValueNotFound(); // TODO: REVIEW
+                throw new EnumeratedValueNotFound();
             }
         }
     }
@@ -185,6 +185,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
         }
     }
 
+
     /**
      * Create and insert a node in parent object node
      *
@@ -215,13 +216,14 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                         .stream(attributeValue
                                 .strip().
                                 split(REGEXP))
-                        .map(function)
+                        .map(c ->
+                                getObjectValueOrNull(c, function))
                         .collect(Collectors.toList());
                 nodeArray.addAll((ArrayNode) objectMapper
                         .valueToTree(localCollection));
 
             } else { // simple node value
-                var value = function.apply(attributeValue);
+                Object value = getObjectValueOrNull(attributeValue, function);
                 parent.set(attributeName, objectMapper.valueToTree(value));
             }
 
@@ -229,6 +231,23 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
             log.error("*** Error occurred in 'simple' node creation: {}", ex.getMessage());
         }
     }
+
+    /**
+     * Wrapper for parse/cast exceptions on function execution
+     *
+     * @param value value
+     * @param function value parser function
+     * @return result of function execution
+     */
+    private static Object getObjectValueOrNull(String value, Function<String, Object> function) {
+        try {
+            return function.apply(value);
+        } catch (Exception ex) {
+            //
+        }
+        return null;
+    }
+}
 
 
     /*private void traverse(Config parent, JsonNode root) {
@@ -370,4 +389,3 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
 
         return new AttributeType();
     }*/
-}
