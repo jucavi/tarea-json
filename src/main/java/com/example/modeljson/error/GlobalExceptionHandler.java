@@ -1,9 +1,6 @@
 package com.example.modeljson.error;
 
-import com.example.modeljson.error.notfound.AttributeNotFoundException;
-import com.example.modeljson.error.notfound.AttributeTypeNotFoundException;
-import com.example.modeljson.error.notfound.AttributeTypeValueNotFoundException;
-import com.example.modeljson.error.notfound.ConfigNotFoundException;
+import com.example.modeljson.error.notfound.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.HttpStatus;
@@ -52,7 +49,8 @@ public class GlobalExceptionHandler {
             ConfigNotFoundException.class,
             AttributeNotFoundException.class,
             AttributeTypeNotFoundException.class,
-            AttributeTypeValueNotFoundException.class
+            AttributeTypeValueNotFoundException.class,
+            EnumeratedValueNotFound.class
     })
     public ResponseEntity<AppError> handleNotFoundException(RuntimeException ex) {
 
