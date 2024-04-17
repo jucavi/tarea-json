@@ -39,7 +39,7 @@ public class ConfigServiceImpl implements IConfigService {
     }
 
     /**
-     * Retrieve all config nodes from database even if deleted
+     * Retrieve all config nodes from database even if soft deleted
      *
      * @return a list all config nodes even if marked as deleted
      */
@@ -66,9 +66,9 @@ public class ConfigServiceImpl implements IConfigService {
         
         log.info("Retrieving config node with id: {}", id);
 
-        var config = repository.findById(id);
+        var config = repository.findByIdAndDeletedFalse(id);
 
-        if (config.isEmpty() || config.get().getDeleted()) {
+        if (config.isEmpty()) {
             throw new ConfigNotFoundException();
         }
 
@@ -136,11 +136,19 @@ public class ConfigServiceImpl implements IConfigService {
      */
     @Override
     public void deleteById(Long id) {
-        throw new RuntimeException("Sorry, not implemented yet");
+
+        var config = repository.findByIdAndDeletedFalse(id);
+        config.ifPresent(value -> value.setDeleted(false));
     }
 
+    /**
+     * Remove a config node from database with the given id
+     *
+     * @param id config node identifier
+     */
     @Override
     public void deleteDeepById(Long id) {
-        throw new RuntimeException("Not implemented yet");
+
+        repository.deleteById(id);
     }
 }

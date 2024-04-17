@@ -5,26 +5,43 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IConfigRepository extends JpaRepository<Config, Long> {
 
+
     /**
-     * Find parent for given parent identifier
+     * Find parent for the given parent identifier
      *
      * @param parentId parent identifier
      * @return a list of children for a parent
      */
     List<Config> findByParentId(Long parentId);
 
+
     /**
-     * Find valid configs with parent root
+     * Find configs with parent root
+     *
+     * @return a list of root level configs
+     */
+    List<Config> findByParent(Config parent);
+
+    /**
+     * Config node with id and deleted false
+     * 
+     * @param id identifier
+     */
+    Optional<Config> findByIdAndDeletedFalse(Long id);
+
+   
+    /**
+     * Find configs with parent root and not deleted
      *
      * @return a list of root level configs
      */
     List<Config> findByParentNullAndDeletedFalse();
 
-    List<Config> findByParent(Config parent);
 
     /**
      * Find valid configs with parent retrieved by id
