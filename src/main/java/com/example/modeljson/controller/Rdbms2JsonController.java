@@ -29,4 +29,14 @@ public class Rdbms2JsonController {
     public ResponseEntity<?> loadConfigJson() {
         return ResponseEntity.ok(service.buildConfigJson());
     }
+
+    @GetMapping("/benchmark")
+    public ResponseEntity<Long> benchmark() {
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < 1; i++) {
+            service.buildConfigJson();
+        }
+
+        return ResponseEntity.ok(System.currentTimeMillis() - startTime);
+    }
 }
