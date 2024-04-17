@@ -243,9 +243,8 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
         try {
             return function.apply(value);
         } catch (Exception ex) {
-            //
+            return null;
         }
-        return null;
     }
 }
 
