@@ -3,6 +3,7 @@ package com.example.modeljson.error.notfound;
 public class ConfigNotFoundException extends RuntimeException {
 
     public ConfigNotFoundException() {
+        super("Config node not found.");
     }
 
     public ConfigNotFoundException(String message) {

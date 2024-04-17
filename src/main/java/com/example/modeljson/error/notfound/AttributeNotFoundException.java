@@ -2,6 +2,7 @@ package com.example.modeljson.error.notfound;
 
 public class AttributeNotFoundException extends RuntimeException {
     public AttributeNotFoundException() {
+        super("Attribute not found.");
     }
 
     public AttributeNotFoundException(String message) {

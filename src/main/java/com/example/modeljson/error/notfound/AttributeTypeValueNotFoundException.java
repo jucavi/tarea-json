@@ -3,6 +3,7 @@ package com.example.modeljson.error.notfound;
 public class AttributeTypeValueNotFoundException extends RuntimeException {
 
     public AttributeTypeValueNotFoundException() {
+        super("Attribute type value not found.");
     }
 
     public AttributeTypeValueNotFoundException(String message) {

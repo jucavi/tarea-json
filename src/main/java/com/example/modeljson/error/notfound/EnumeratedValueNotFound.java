@@ -3,6 +3,7 @@ package com.example.modeljson.error.notfound;
 public class EnumeratedValueNotFound extends RuntimeException {
 
     public EnumeratedValueNotFound() {
+        super("Enumerated value not found.");
     }
 
     public EnumeratedValueNotFound(String message) {
