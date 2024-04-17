@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
         log.error(message);
 
         Map<String, String> errors = new HashMap<>();
-        errors.put("System", message);
+        errors.put("Error", message);
 
         return ResponseEntity.unprocessableEntity().body(new AppError(
                 HttpStatus.INTERNAL_SERVER_ERROR,
