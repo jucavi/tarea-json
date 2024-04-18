@@ -1,6 +1,8 @@
 package com.example.modeljson.service;
 
 import com.example.modeljson.error.notfound.EnumeratedValueNotFound;
+import com.example.modeljson.model.Attribute;
+import com.example.modeljson.model.AttributeType;
 import com.example.modeljson.model.AttributeTypeValue;
 import com.example.modeljson.model.Config;
 import com.example.modeljson.repository.IConfigRepository;
@@ -12,9 +14,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,13 +40,16 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
      */
     @Override
     public void storeConfigJson(@NonNull MultipartFile file) {
-        throw new RuntimeException("Not implemented yet");
-//        try {
-//            InputStreamReader reader = new InputStreamReader(file.getInputStream());
-//            //traverse(null, objectMapper.readTree(reader));
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            InputStreamReader reader = new InputStreamReader(file.getInputStream());
+            JsonNode inNode = objectMapper.readTree(reader);
+            JsonNode outNode = buildConfigJson();
+
+            assert  inNode == outNode;
+            //traverse(null, objectMapper.readTree(reader));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -69,21 +77,15 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
 
         for (Config child : children) {
 
+            Attribute attribute = child.getAttribute();
+            AttributeType attributeType = attribute.getAttributeType();
+
             String attributeValue = child.getDefaultValue();
-            String attributeName = child
-                    .getAttribute()
-                    .getName();
-            String type = child.getAttribute()
-                    .getAttributeType()
-                    .getType();
-            Boolean isList = child
-                    .getAttribute()
-                    .getAttributeType()
-                    .getIsList();
-            Boolean isEnum = child
-                    .getAttribute()
-                    .getAttributeType()
-                    .getIsEnum();
+            String attributeName = attribute.getName();
+            String type = attributeType.getType();
+
+            Boolean isList = attributeType.getIsList();
+            Boolean isEnum = attributeType.getIsEnum();
 
 
             // Check if it is a valid enum value
@@ -91,10 +93,6 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
             isValidEnumValue(child, isEnum, attributeValue);
 
             switch (type) {
-                case "String": {
-                    createNode(parent, isList, attributeName, attributeValue, String::valueOf);
-                    break;
-                }
                 case "Boolean": {
                     createNode(parent, isList, attributeName, attributeValue, Boolean::valueOf);
                     break;
@@ -115,12 +113,21 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                             fillArrayObjectsNode(currentChildren, currentParent); // fill with objects built with children configs
 
                         } else { // simple value
-                            ObjectNode nestedNode = parent.putObject(attributeName);
-                            this.traverseBuild(currentChildren, nestedNode);
+                            try {
+                                ObjectNode nestedNode = parent.putObject(attributeName);
+                                this.traverseBuild(currentChildren, nestedNode);
+                            } catch (Exception ex) {
+                                log.error("*** Error occurred in 'single object' node creation {}/{}: {}", attributeName, attributeValue, ex.getMessage());
+                            }
                         }
                     } catch (Exception ex) {
-                        log.error("*** Error occurred in 'object' node creation: {}", ex.getMessage());
+                        log.error("*** Error occurred in 'object' node creation {}/{}: {}", attributeName, attributeValue, ex.getMessage());
                     }
+                    break;
+                }
+                case "String":
+                default: {
+                    createNode(parent, isList, attributeName, attributeValue, String::valueOf);
                     break;
                 }
             }
