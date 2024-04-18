@@ -208,13 +208,13 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
      * @param isList {@code true} if it is a list node, otherwise false
      * @param attributeName tag name
      * @param attributeValue value of attribute as string
-     * @param function function required for mapping values
+     * @param parserFunction function required for mapping values
      */
     private void createNode(ObjectNode parent,
                             Boolean isList,
                             String attributeName,
                             String attributeValue,
-                            Function<String, Object> function) {
+                            Function<String, Object> parserFunction) {
         try {
             // parent cant be null
             assert parent != null;
@@ -228,13 +228,13 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                                 .strip().
                                 split(REGEXP))
                         .map(c ->
-                                getObjectValueOrNull(c, function))
+                                getObjectValueOrNull(c, parserFunction))
                         .collect(Collectors.toList());
                 nodeArray.addAll((ArrayNode) objectMapper
                         .valueToTree(localCollection));
 
             } else { // simple node value
-                Object value = getObjectValueOrNull(attributeValue, function);
+                Object value = getObjectValueOrNull(attributeValue, parserFunction);
                 parent.set(attributeName, objectMapper.valueToTree(value));
             }
 
