@@ -142,7 +142,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
                     .getAttribute()
                     .getAttributeType()
                     .getAttributeTypeValueList();
-            if (enumValues.stream().noneMatch(e -> e.getValue().equalsIgnoreCase(attributeValue))) {
+            if (enumValues.stream().noneMatch(e -> attributeValue.matches(e.getValue()))) {
                 throw new EnumeratedValueNotFound();
             }
         }
