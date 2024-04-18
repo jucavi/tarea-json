@@ -13,9 +13,9 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name", "attribute_type"})
-})
+//@Table(uniqueConstraints = {
+//        @UniqueConstraint(columnNames = {"name", "attribute_type"})
+//})
 public class Attribute extends AbstractEntityConfig<Long> {
 
     @Id

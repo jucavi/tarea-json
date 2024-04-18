@@ -25,6 +25,8 @@ public class Config extends AbstractEntityConfig<Long> {
     @Column(columnDefinition = "boolean default false")
     private Boolean isCustom = Boolean.FALSE;
 
+    private Long applicationNode;
+
     //@NotNull
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER)

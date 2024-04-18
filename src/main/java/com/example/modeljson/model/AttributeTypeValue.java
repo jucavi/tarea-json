@@ -20,7 +20,7 @@ public class AttributeTypeValue extends AbstractEntityConfig<Long> {
 
     @NonNull
     @NotBlank(message = "Value field can't be empty")
-    @Column(unique = true)
+    //@Column(unique = true)
     private String value;
 
     @Column()
