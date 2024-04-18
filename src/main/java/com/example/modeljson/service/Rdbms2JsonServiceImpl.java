@@ -163,7 +163,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
             traverseBuild(children, objectNode); // return an object { key1: [1,2,3,...,9], key2: {a,b,c,...,i}}
             zipObjectsNodes(objectNode, parent);
         } catch (Exception ex) {
-            log.error("Error creating array nested object: {}", ex.getMessage());
+            log.error("Error creating array nested object {} : {}", objectNode, ex.getMessage());
         }
     }
 
@@ -175,20 +175,24 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
      */
     private void zipObjectsNodes(ObjectNode objectNode, ArrayNode parent) {
 
-        var fields = objectNode.fields();
-        while (fields.hasNext()) {
-            Map.Entry<String, JsonNode> field = fields.next();
-            String key = field.getKey();
-            ArrayNode values = (ArrayNode) field.getValue();
+        try {
+            var fields = objectNode.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> field = fields.next();
+                String key = field.getKey();
+                ArrayNode values = (ArrayNode) field.getValue();
 
-            for (int i = 0; i < values.size(); i++) {
-                if (parent.size() <= i) {
-                    parent.add(objectMapper.createObjectNode().set(key, values.get(i)));
-                } else {
-                    ((ObjectNode) parent.get(i)).set(key, values.get(i));
+                for (int i = 0; i < values.size(); i++) {
+                    if (parent.size() <= i) {
+                        parent.add(objectMapper.createObjectNode().set(key, values.get(i)));
+                    } else {
+                        ((ObjectNode) parent.get(i)).set(key, values.get(i));
+                    }
                 }
+
             }
-            
+        } catch (Exception ex) {
+            log.error("Error Zipping {} : {}", objectNode, ex.getMessage());
         }
     }
 
@@ -235,7 +239,8 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
             }
 
         } catch (Exception ex) {
-            log.error("*** Error occurred in 'simple' node creation: {}", ex.getMessage());
+            // node already created
+            log.error("*** Error occurred in 'simple' node creation {}/{}: {}", attributeName, attributeValue, ex.getMessage());
         }
     }
 
@@ -250,6 +255,7 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
         try {
             return function.apply(value);
         } catch (Exception ex) {
+            log.error("Unexpected expression getting value or null {}: {}", value, ex.getMessage());
             return null;
         }
     }
