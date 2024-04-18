@@ -253,7 +253,12 @@ public class Rdbms2JsonServiceImpl implements IRdbms2JsonService {
      */
     private static Object getObjectValueOrNull(String value, Function<String, Object> function) {
         try {
-            return function.apply(value);
+            Object tmpObj = function.apply(value);
+
+            return (ObjectUtils.isEmpty(tmpObj) && tmpObj instanceof String)
+                    || tmpObj.toString().equalsIgnoreCase("null") ? null : tmpObj;
+
+            //return tmpObj;
         } catch (Exception ex) {
             log.error("Unexpected expression getting value or null {}: {}", value, ex.getMessage());
             return null;
